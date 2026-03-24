@@ -1,98 +1,186 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, Text, View, Pressable } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import AllHabitsCompletePopup from "@/components/AllHabitsCompletePopup";
+import { getHabitAccent } from "@/constants/theme";
+import { useAppTranslation } from "@/hooks/use-app-translation";
+import { useUserData } from "@/store/user-data";
+import { commonStyles } from "@/styles/common";
+import { homeStyles as styles } from "@/styles/screens/home";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+function getCurrentWeek(referenceDate: Date, locale: string) {
+  const startOfWeek = new Date(referenceDate);
+  startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setDate(referenceDate.getDate() - referenceDate.getDay());
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + index);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    return {
+      key: index,
+      label: date.toLocaleDateString(locale, { weekday: "short" }),
+      date,
+    };
+  });
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export default function Home() {
+  const { habits, profile, incrementHabit } = useUserData();
+  const { locale, t } = useAppTranslation();
+  const [showCelebrationPopup, setShowCelebrationPopup] = useState(false);
+  const [showCelebrationMessage, setShowCelebrationMessage] = useState(false);
+  const wasAllCompletedRef = useRef(false);
+  const now = new Date();
+  const greeting =
+    now.getHours() < 12 ? t("homeGoodMorning") : t("homeGoodAfternoon");
+  const currentWeek = getCurrentWeek(now, locale);
+  const allHabitsCompleted =
+    habits.length > 0 && habits.every((habit) => habit.current >= habit.goal);
+
+  function handleOpenCelebrationPopup() {
+    setShowCelebrationMessage(false);
+    setShowCelebrationPopup(true);
+  }
+
+  function handleCloseCelebrationPopup(showHomeMessage = false) {
+    setShowCelebrationPopup(false);
+    setShowCelebrationMessage(showHomeMessage);
+  }
+
+  useEffect(() => {
+    if (allHabitsCompleted && !wasAllCompletedRef.current) {
+      setShowCelebrationPopup(true);
+      setShowCelebrationMessage(false);
+    }
+
+    if (!allHabitsCompleted) {
+      setShowCelebrationPopup(false);
+      setShowCelebrationMessage(false);
+    }
+
+    wasAllCompletedRef.current = allHabitsCompleted;
+  }, [allHabitsCompleted]);
+
+  return (
+    <View style={styles.page}>
+      <ScrollView
+        style={commonStyles.scrollPage}
+        contentContainerStyle={commonStyles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.greetingBlock}>
+          <Text style={styles.greetingLabel}>{greeting}</Text>
+          <Text style={styles.greetingName}>{profile.name}</Text>
+        </View>
+
+        <Pressable
+          style={styles.testPopupButton}
+          onPress={handleOpenCelebrationPopup}
+        >
+          <Text style={styles.testPopupButtonText}>
+            {t("homeTestPopupButton")}
+          </Text>
+        </Pressable>
+
+        <View style={styles.weekStrip}>
+          {currentWeek.map((day) => {
+            const isToday = day.date.toDateString() === now.toDateString();
+
+            return (
+              <View style={styles.dayPill} key={day.key}>
+                <View style={[styles.dayCircle, isToday && styles.dayCircleToday]}>
+                  <Text style={[styles.dayDate, isToday && styles.dayDateToday]}>
+                    {day.date.getDate()}
+                  </Text>
+                </View>
+                <Text style={[styles.dayLabel, isToday && styles.dayLabelToday]}>
+                  {day.label}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+
+        {showCelebrationMessage && (
+          <View style={styles.celebrationMessageCard}>
+            <Text style={styles.celebrationMessageTitle}>
+              {t("homeAllHabitsCompleteTitle")}
+            </Text>
+            <Text style={styles.celebrationMessageCopy}>
+              {t("homeAllHabitsCompleteCopy")}
+            </Text>
+          </View>
+        )}
+
+        <View style={styles.habitStack}>
+          {habits.map((habit) => {
+            const colors = getHabitAccent(habit.color);
+            const progressPercent = Math.round((habit.current / habit.goal) * 100);
+            const progressLabel = `${habit.current}/${habit.goal} ${habit.unit}`;
+
+            return (
+              <View
+                key={habit.name}
+                style={[styles.habitCard, { backgroundColor: colors.card }]}
+              >
+                <View
+                  style={[
+                    styles.habitProgressFillBackground,
+                    {
+                      width: `${progressPercent}%`,
+                      backgroundColor: colors.fill,
+                    },
+                  ]}
+                />
+
+                <View style={styles.habitCardContent}>
+                  <View style={styles.habitMain}>
+                    <View style={styles.habitMainRow}>
+                      <Text style={styles.habitIcon}>{habit.icon}</Text>
+
+                      <View style={styles.habitCopy}>
+                        <Text style={styles.habitTitle}>{habit.name}</Text>
+                        <Text style={styles.habitSubtitle}>{progressLabel}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.habitProgressRow}>
+                      <View style={styles.habitProgressTrack}>
+                        <View
+                          style={[
+                            styles.habitProgressValue,
+                            {
+                              width: `${progressPercent}%`,
+                              backgroundColor: colors.progress,
+                            },
+                          ]}
+                        />
+                      </View>
+
+                      <Text style={styles.habitPercent}>{progressPercent}%</Text>
+                    </View>
+                  </View>
+
+                  <Pressable
+                    style={[
+                      styles.habitAddButton,
+                      { backgroundColor: colors.button },
+                    ]}
+                    onPress={() => incrementHabit(habit.id)}
+                  >
+                    <Ionicons name="add" size={24} color="#FFFFFF" />
+                  </Pressable>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      {showCelebrationPopup && (
+        <AllHabitsCompletePopup onClose={handleCloseCelebrationPopup} />
+      )}
+    </View>
+  );
+}
