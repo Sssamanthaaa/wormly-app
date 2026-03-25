@@ -7,6 +7,20 @@ export const customHabitStyles = StyleSheet.create({
     paddingHorizontal: AppTheme.spacing.pageHorizontal,
     paddingBottom: 40,
   },
+  closeButtonRow: {
+    alignItems: "flex-end",
+    marginBottom: 12,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: AppTheme.colors.surface,
+    borderWidth: 1,
+    borderColor: AppTheme.colors.border,
+  },
   headerTitle: {
     marginBottom: 20,
   },

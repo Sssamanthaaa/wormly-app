@@ -19,23 +19,6 @@ export const homeStyles = StyleSheet.create({
     fontFamily: AppTheme.fonts.bold,
     color: AppTheme.colors.text,
   },
-  testPopupButton: {
-    alignSelf: "flex-start",
-    minHeight: 38,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    backgroundColor: AppTheme.colors.surface,
-    borderWidth: 1,
-    borderColor: AppTheme.colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-  },
-  testPopupButtonText: {
-    fontSize: 13,
-    fontFamily: AppTheme.fonts.semibold,
-    color: AppTheme.colors.text,
-  },
   weekStrip: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -55,7 +38,24 @@ export const homeStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 4,
   },
+  celebrationMessageHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  celebrationMessageCloseButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  celebrationMessageCloseIcon: {
+    color: AppTheme.colors.textMuted,
+  },
   celebrationMessageTitle: {
+    flex: 1,
     fontSize: AppTheme.typography.titleLg,
     fontFamily: AppTheme.fonts.bold,
     color: AppTheme.colors.text,

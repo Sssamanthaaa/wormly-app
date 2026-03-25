@@ -19,8 +19,23 @@ export default function AdBanner({
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const nativeAds = require("react-native-google-mobile-ads") as typeof import("react-native-google-mobile-ads");
+  let nativeAds: typeof import("react-native-google-mobile-ads") | null = null;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    nativeAds = require("react-native-google-mobile-ads") as typeof import("react-native-google-mobile-ads");
+  } catch {
+    nativeAds = null;
+  }
+
+  if (!nativeAds) {
+    return (
+      <View style={styles.placeholder}>
+        <Text style={styles.placeholderText}>{label}</Text>
+      </View>
+    );
+  }
+
   const { BannerAd, TestIds } = nativeAds;
 
   return (

@@ -47,7 +47,7 @@ function clearScheduledClose(timeoutRef: {
 function closeCelebration(
   timeoutRef: { current: ReturnType<typeof setTimeout> | null },
   onClose: AllHabitsCompletePopupProps["onClose"],
-  showHomeMessage = false
+  showHomeMessage = true
 ) {
   clearScheduledClose(timeoutRef);
   onClose(showHomeMessage);
@@ -123,12 +123,6 @@ export default function AllHabitsCompletePopup({
       onRequestClose={() => closeCelebration(autoCloseTimeoutRef, onClose)}
     >
       <View style={styles.popupLayer}>
-        <View style={styles.backgroundGlowTop} />
-        <View style={styles.backgroundGlowMiddle} />
-        <View style={styles.backgroundGlowBottom} />
-        <View style={styles.backgroundMistLeft} />
-        <View style={styles.backgroundMistRight} />
-
         <View
           style={[
             styles.popupShell,

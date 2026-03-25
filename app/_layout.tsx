@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Platform, Text, TextInput } from "react-native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import Constants from "expo-constants";
 import {
   Manrope_400Regular,
   Manrope_500Medium,
@@ -33,7 +34,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (Platform.OS === "web") return;
+    if (Platform.OS === "web" || Constants.appOwnership === "expo") return;
 
     void initializeAds();
   }, []);

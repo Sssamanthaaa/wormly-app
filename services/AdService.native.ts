@@ -16,7 +16,11 @@ type InterstitialAdCallbacks = {
 type GoogleMobileAdsModule = typeof import("react-native-google-mobile-ads");
 
 function getGoogleMobileAdsModule() {
-  return require("react-native-google-mobile-ads") as GoogleMobileAdsModule;
+  try {
+    return require("react-native-google-mobile-ads") as GoogleMobileAdsModule;
+  } catch {
+    return null;
+  }
 }
 
 function createRequestOptions() {
@@ -24,19 +28,33 @@ function createRequestOptions() {
 }
 
 export async function initializeAds() {
-  const { default: mobileAds } = getGoogleMobileAdsModule();
-  await mobileAds().initialize();
+  const mobileAdsModule = getGoogleMobileAdsModule();
+  if (!mobileAdsModule) return;
+
+  const { default: mobileAds } = mobileAdsModule;
+  try {
+    await mobileAds().initialize();
+  } catch {
+    return;
+  }
 }
 
 export async function showRewardedAd(
   callbacks: RewardedAdCallbacks = {}
 ): Promise<boolean> {
+  const mobileAdsModule = getGoogleMobileAdsModule();
+  if (!mobileAdsModule) {
+    callbacks.onError?.();
+    callbacks.onClosed?.();
+    return false;
+  }
+
   const {
     AdEventType,
     RewardedAd,
     RewardedAdEventType,
     TestIds,
-  } = getGoogleMobileAdsModule();
+  } = mobileAdsModule;
 
   callbacks.onLoading?.();
 
@@ -107,11 +125,18 @@ export async function showRewardedAd(
 export async function showInterstitialAd(
   callbacks: InterstitialAdCallbacks = {}
 ): Promise<boolean> {
+  const mobileAdsModule = getGoogleMobileAdsModule();
+  if (!mobileAdsModule) {
+    callbacks.onError?.();
+    callbacks.onClosed?.();
+    return false;
+  }
+
   const {
     AdEventType,
     InterstitialAd,
     TestIds,
-  } = getGoogleMobileAdsModule();
+  } = mobileAdsModule;
 
   callbacks.onLoading?.();
 

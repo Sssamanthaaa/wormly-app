@@ -38,11 +38,6 @@ export default function Home() {
   const allHabitsCompleted =
     habits.length > 0 && habits.every((habit) => habit.current >= habit.goal);
 
-  function handleOpenCelebrationPopup() {
-    setShowCelebrationMessage(false);
-    setShowCelebrationPopup(true);
-  }
-
   function handleCloseCelebrationPopup(showHomeMessage = false) {
     setShowCelebrationPopup(false);
     setShowCelebrationMessage(showHomeMessage);
@@ -74,15 +69,6 @@ export default function Home() {
           <Text style={styles.greetingName}>{profile.name}</Text>
         </View>
 
-        <Pressable
-          style={styles.testPopupButton}
-          onPress={handleOpenCelebrationPopup}
-        >
-          <Text style={styles.testPopupButtonText}>
-            {t("homeTestPopupButton")}
-          </Text>
-        </Pressable>
-
         <View style={styles.weekStrip}>
           {currentWeek.map((day) => {
             const isToday = day.date.toDateString() === now.toDateString();
@@ -104,9 +90,24 @@ export default function Home() {
 
         {showCelebrationMessage && (
           <View style={styles.celebrationMessageCard}>
-            <Text style={styles.celebrationMessageTitle}>
-              {t("homeAllHabitsCompleteTitle")}
-            </Text>
+            <View style={styles.celebrationMessageHeader}>
+              <Text style={styles.celebrationMessageTitle}>
+                {t("homeAllHabitsCompleteTitle")}
+              </Text>
+
+              <Pressable
+                style={styles.celebrationMessageCloseButton}
+                onPress={() => setShowCelebrationMessage(false)}
+                hitSlop={10}
+              >
+                <Ionicons
+                  name="close"
+                  size={18}
+                  color={styles.celebrationMessageCloseIcon.color}
+                />
+              </Pressable>
+            </View>
+
             <Text style={styles.celebrationMessageCopy}>
               {t("homeAllHabitsCompleteCopy")}
             </Text>
