@@ -11,10 +11,13 @@ import {
   useFonts,
 } from "@expo-google-fonts/manrope";
 import { AppTheme } from "@/constants/theme";
+import LaunchScreen from "@/components/LaunchScreen";
 import { initializeAds } from "../services/AdService";
 import { UserDataProvider } from "@/store/user-data";
 
-void SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync().catch(() => {
+  return;
+});
 
 type TextLikeComponent = {
   defaultProps?: {
@@ -32,6 +35,12 @@ export default function RootLayout() {
     Manrope_600SemiBold,
     Manrope_700Bold,
   });
+
+  useEffect(() => {
+    void SplashScreen.hideAsync().catch(() => {
+      return;
+    });
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === "web" || Constants.appOwnership === "expo") return;
@@ -53,18 +62,19 @@ export default function RootLayout() {
       ...inputDefaults,
       style: [{ fontFamily: AppTheme.fonts.regular }, inputDefaults.style],
     };
-
-    void SplashScreen.hideAsync();
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null;
+    return <LaunchScreen />;
   }
 
   return (
     <UserDataProvider>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false, title: "Wormly" }}
+        />
       </Stack>
     </UserDataProvider>
   );

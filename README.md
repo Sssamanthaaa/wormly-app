@@ -1,50 +1,34 @@
-# Welcome to your Expo app 👋
+# Wormly
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Wormly is a personal project built to help people get on track with creating new habits, from education goals to everyday personal routines. The app is inspired by the idea of a caterpillar growing into a butterfly as a symbol of progress, change, and self-growth.
 
-## Get started
+This app is still very much a work in progress, but the goal is to make habit building feel more visual, encouraging, and rewarding.
 
-1. Install dependencies
+## Current focus
 
-   ```bash
-   npm install
-   ```
+- Habit tracking for everyday routines
+- Progress and growth-based motivation
+- Custom habit creation
+- Calendar and profile features
+- Rewarded ad flows for optional feature unlocks
 
-2. Start the app
+## AdMob note
 
-   ```bash
-   npx expo start
-   ```
+Wormly includes rewarded ad flows as part of the app experience. These ads are intended to support optional unlock paths rather than interrupt the core user experience. The goal is to use AdMob in a lightweight way that feels connected to the app's growth system instead of being intrusive.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+For Android:
 
-## Learn more
+```bash
+npx expo run:android
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Project note
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This is a personal project, and it is still evolving. There is still a lot I want to improve, refine, and build out over time.
