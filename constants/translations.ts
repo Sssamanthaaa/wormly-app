@@ -97,8 +97,10 @@ export const translations = {
       "In order to add a habit you need a token. In order to get more tokens, you need to watch an ad.",
     adbridgeExpoMessage:
       "Expo Go uses a mock ad reward. A dev build will show the real test ad.",
+    adbridgeWebMessage: "Web demo uses simulated ad rewards.",
     adbridgeGoogleMessage: "This button uses Google's rewarded test ad.",
     adbridgeMockRewardGranted: "Expo Go mock reward granted. 1 token added.",
+    adbridgeWebRewardGranted: "Web demo reward granted. 1 token added.",
     adbridgeLoadingRewarded: "Loading rewarded test ad...",
     adbridgeOpeningRewarded: "Opening rewarded test ad...",
     adbridgeCouldNotOpen:
@@ -214,10 +216,13 @@ export const translations = {
       "Para agregar un habito necesitas una ficha. Para conseguir mas fichas, necesitas ver un anuncio.",
     adbridgeExpoMessage:
       "Expo Go usa una recompensa simulada. Una compilacion de desarrollo mostrara el anuncio de prueba real.",
+    adbridgeWebMessage: "La demo web usa recompensas de anuncio simuladas.",
     adbridgeGoogleMessage:
       "Este boton usa el anuncio de recompensa de prueba de Google.",
     adbridgeMockRewardGranted:
       "Se otorgo la recompensa simulada de Expo Go. Se agrego 1 ficha.",
+    adbridgeWebRewardGranted:
+      "Se otorgo la recompensa simulada web. Se agrego 1 ficha.",
     adbridgeLoadingRewarded: "Cargando anuncio de recompensa...",
     adbridgeOpeningRewarded: "Abriendo anuncio de recompensa...",
     adbridgeCouldNotOpen:
@@ -335,10 +340,13 @@ export const translations = {
       "Pour ajouter une habitude, il vous faut un jeton. Pour obtenir plus de jetons, vous devez regarder une pub.",
     adbridgeExpoMessage:
       "Expo Go utilise une recompense simulee. Une build de developpement affichera la vraie pub de test.",
+    adbridgeWebMessage: "La demo web utilise des recompenses pub simulees.",
     adbridgeGoogleMessage:
       "Ce bouton utilise la pub de recompense de test de Google.",
     adbridgeMockRewardGranted:
       "Recompense simulee Expo Go accordee. 1 jeton ajoute.",
+    adbridgeWebRewardGranted:
+      "Recompense simulee web accordee. 1 jeton ajoute.",
     adbridgeLoadingRewarded: "Chargement de la pub de recompense...",
     adbridgeOpeningRewarded: "Ouverture de la pub de recompense...",
     adbridgeCouldNotOpen:
@@ -376,7 +384,7 @@ export function translate(
   key: TranslationKey,
   params: Record<string, string | number> = {}
 ) {
-  let value = translations[language][key] ?? translations.English[key];
+  let value: string = translations[language][key] ?? translations.English[key];
 
   for (const [param, replacement] of Object.entries(params)) {
     value = value.replaceAll(`{${param}}`, String(replacement));

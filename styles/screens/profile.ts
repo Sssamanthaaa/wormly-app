@@ -5,10 +5,12 @@ export const profileStyles = StyleSheet.create({
   page: {
     gap: 16,
   },
+  accountHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   lockButton: {
-    position: "absolute",
-    top: 18,
-    right: 20,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -17,7 +19,6 @@ export const profileStyles = StyleSheet.create({
     backgroundColor: AppTheme.colors.surface,
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
-    zIndex: 2,
   },
   lockButtonUnlocked: {
     backgroundColor: AppTheme.colors.primary,

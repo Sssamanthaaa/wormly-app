@@ -87,21 +87,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={[commonStyles.page, styles.page]}>
-      <Pressable
-        style={[
-          styles.lockButton,
-          profileAccountUnlocked && styles.lockButtonUnlocked,
-        ]}
-        onPress={openAccountUnlockAdBridge}
-        disabled={profileAccountUnlocked}
-      >
-        <Ionicons
-          name={profileAccountUnlocked ? "lock-open" : "lock-closed"}
-          size={18}
-          color={profileAccountUnlocked ? AppTheme.colors.white : AppTheme.colors.text}
-        />
-      </Pressable>
-
       <View style={commonStyles.card}>
         <View style={styles.hero}>
           <View
@@ -122,9 +107,31 @@ export default function ProfileScreen() {
       </View>
 
       <View style={commonStyles.card}>
-        <Text style={commonStyles.sectionTitle}>
-          {t("profileAccountDetails")}
-        </Text>
+        <View style={styles.accountHeader}>
+          <Text style={commonStyles.sectionTitle}>
+            {t("profileAccountDetails")}
+          </Text>
+
+          <Pressable
+            style={[
+              styles.lockButton,
+              profileAccountUnlocked && styles.lockButtonUnlocked,
+            ]}
+            onPress={openAccountUnlockAdBridge}
+            disabled={profileAccountUnlocked}
+            hitSlop={10}
+          >
+            <Ionicons
+              name={profileAccountUnlocked ? "lock-open" : "lock-closed"}
+              size={18}
+              color={
+                profileAccountUnlocked
+                  ? AppTheme.colors.white
+                  : AppTheme.colors.text
+              }
+            />
+          </Pressable>
+        </View>
 
         {!profileAccountUnlocked && (
           <Text style={styles.lockedHint}>{t("profileLockedHint")}</Text>

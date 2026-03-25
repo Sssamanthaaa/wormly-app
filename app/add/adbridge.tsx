@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router, useLocalSearchParams, type Href } from "expo-router";
-import {
-  AdEventType,
-  RewardedAd,
-  RewardedAdEventType,
-  TestIds,
-} from "react-native-google-mobile-ads";
 import { AppTheme } from "@/constants/theme";
 import { useAppTranslation } from "@/hooks/use-app-translation";
+import { showRewardedAd } from "../../services/AdService";
 import { useUserData } from "@/store/user-data";
 import { adBridgeStyles as styles } from "@/styles/screens/adbridge";
 
@@ -31,12 +26,15 @@ export default function AdBridgeScreen() {
   } =
     useUserData();
   const canRedeemToken = tokenCount > 0;
+  const isWeb = Platform.OS === "web";
   const usesExpoGo = Constants.appOwnership === "expo";
   const isProgressInsightsUnlock = unlockTarget === "progress-insights";
   const isProfileAccountUnlock = unlockTarget === "profile-account";
   const [isLoadingAd, setIsLoadingAd] = useState(false);
   const [watchAdMessage, setWatchAdMessage] = useState(
-    usesExpoGo
+    isWeb
+      ? t("adbridgeWebMessage")
+      : usesExpoGo
       ? t("adbridgeExpoMessage")
       : t("adbridgeGoogleMessage")
   );
@@ -53,67 +51,33 @@ export default function AdBridgeScreen() {
       ? t("adbridgeUnlockAccountCopy")
       : t("adbridgeNeedTokenCopy");
 
-  function handleWatchAdNow() {
+  async function handleWatchAdNow() {
     if (isLoadingAd) return;
 
-    if (usesExpoGo) {
+    setIsLoadingAd(true);
+
+    if (usesExpoGo && !isWeb) {
       awardToken(1);
       setWatchAdMessage(t("adbridgeMockRewardGranted"));
+      setIsLoadingAd(false);
       return;
     }
 
-    const rewardedAd = RewardedAd.createForAdRequest(TestIds.REWARDED, {
-      requestNonPersonalizedAdsOnly: true,
-    });
-
-    setIsLoadingAd(true);
-    setWatchAdMessage(t("adbridgeLoadingRewarded"));
-
-    const unsubscribeLoaded = rewardedAd.addAdEventListener(
-      RewardedAdEventType.LOADED,
-      () => {
-        setWatchAdMessage(t("adbridgeOpeningRewarded"));
-        void rewardedAd.show().catch(() => {
-          setWatchAdMessage(t("adbridgeCouldNotOpen"));
-          setIsLoadingAd(false);
-          unsubscribeAll();
-        });
-      }
-    );
-
-    const unsubscribeReward = rewardedAd.addAdEventListener(
-      RewardedAdEventType.EARNED_REWARD,
-      () => {
+    await showRewardedAd({
+      onLoading: () => setWatchAdMessage(t("adbridgeLoadingRewarded")),
+      onLoaded: () => setWatchAdMessage(t("adbridgeOpeningRewarded")),
+      onRewardEarned: () => {
         awardToken(1);
-        setWatchAdMessage(t("adbridgeRewardEarned"));
-      }
-    );
-
-    const unsubscribeClosed = rewardedAd.addAdEventListener(
-      AdEventType.CLOSED,
-      () => {
-        setIsLoadingAd(false);
-        unsubscribeAll();
-      }
-    );
-
-    const unsubscribeError = rewardedAd.addAdEventListener(
-      AdEventType.ERROR,
-      () => {
+        setWatchAdMessage(
+          isWeb ? t("adbridgeWebRewardGranted") : t("adbridgeRewardEarned")
+        );
+      },
+      onClosed: () => setIsLoadingAd(false),
+      onError: () => {
         setWatchAdMessage(t("adbridgeCouldNotLoad"));
         setIsLoadingAd(false);
-        unsubscribeAll();
-      }
-    );
-
-    function unsubscribeAll() {
-      unsubscribeLoaded();
-      unsubscribeReward();
-      unsubscribeClosed();
-      unsubscribeError();
-    }
-
-    rewardedAd.load();
+      },
+    });
   }
 
   function handleRedeemToken() {

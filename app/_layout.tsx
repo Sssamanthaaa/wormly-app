@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { Text, TextInput } from "react-native";
+import { Platform, Text, TextInput } from "react-native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import mobileAds from "react-native-google-mobile-ads";
 import {
   Manrope_400Regular,
   Manrope_500Medium,
@@ -11,9 +10,19 @@ import {
   useFonts,
 } from "@expo-google-fonts/manrope";
 import { AppTheme } from "@/constants/theme";
+import { initializeAds } from "../services/AdService";
 import { UserDataProvider } from "@/store/user-data";
 
 void SplashScreen.preventAutoHideAsync();
+
+type TextLikeComponent = {
+  defaultProps?: {
+    style?: unknown;
+  };
+};
+
+const TextWithDefaults = Text as typeof Text & TextLikeComponent;
+const TextInputWithDefaults = TextInput as typeof TextInput & TextLikeComponent;
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -24,20 +33,22 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    void mobileAds().initialize();
+    if (Platform.OS === "web") return;
+
+    void initializeAds();
   }, []);
 
   useEffect(() => {
     if (!fontsLoaded) return;
 
-    const textDefaults = Text.defaultProps ?? {};
-    Text.defaultProps = {
+    const textDefaults = TextWithDefaults.defaultProps ?? {};
+    TextWithDefaults.defaultProps = {
       ...textDefaults,
       style: [{ fontFamily: AppTheme.fonts.regular }, textDefaults.style],
     };
 
-    const inputDefaults = TextInput.defaultProps ?? {};
-    TextInput.defaultProps = {
+    const inputDefaults = TextInputWithDefaults.defaultProps ?? {};
+    TextInputWithDefaults.defaultProps = {
       ...inputDefaults,
       style: [{ fontFamily: AppTheme.fonts.regular }, inputDefaults.style],
     };
